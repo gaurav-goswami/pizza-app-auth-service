@@ -4,13 +4,33 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node dist/server.js"
+    "dev": "node dist/server.js",
+    "format:check": "prettier . --check",
+    "format:fix": "prettier . --write",
+    "lint:check": "eslint .",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.6.3",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "lint-staged": "^14.0.1",
+    "prettier": "3.0.3",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "husky": "^8.0.3"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "npm run lint:check",
+      "npm run format:fix"
+    ]
   }
 }
