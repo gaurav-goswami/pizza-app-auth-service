@@ -1,3 +1,22 @@
-import { Config } from "./config/index";
+import app from "./app";
+import { Config } from "./config";
+import logger from "./config/logger";
 
-console.log("PORT is", Config.PORT);
+const startServer = () => {
+  const PORT = Config.PORT;
+  try {
+    app.listen(PORT, () => {
+      logger.info(`Server is running at PORT ${PORT}`);
+    });
+    // console.log("heu");
+  } catch (error) {
+    if (error instanceof Error) {
+      logger.error(`ERROR: ${error.message}`);
+      setTimeout(() => {
+        process.exit(1);
+      }, 1000);
+    }
+  }
+};
+
+startServer();

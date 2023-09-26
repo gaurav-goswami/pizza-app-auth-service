@@ -13,5 +13,6 @@ module.exports = {
   root: true,
   rules: {
     "dot-notation": "error",
+    "no-console": "error"
   },
 };
