@@ -8,7 +8,6 @@ const startServer = () => {
     app.listen(PORT, () => {
       logger.info(`Server is running at PORT ${PORT}`);
     });
-    // console.log("heu");
   } catch (error) {
     if (error instanceof Error) {
       logger.error(`ERROR: ${error.message}`);

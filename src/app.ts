@@ -9,7 +9,8 @@ const app = express();
 app.get("/", (req, res, next) => {
   // const error = createError(401, "Unauthorized");
   // return next(error);
-  return res.status(201).send("This is Auth-Service route");
+  logger.info("connected");
+  return res.status(201).send("This is Auth-Service route dasjdb");
 });
 
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
