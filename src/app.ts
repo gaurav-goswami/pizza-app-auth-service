@@ -2,16 +2,19 @@
 import express, { Request, Response, NextFunction } from "express";
 import createError, { HttpError } from "http-errors";
 import logger from "./config/logger";
+
+// routes import
+import authRoute from "./routes/auth";
+
 const app = express();
 
-// dummy route
-
 app.get("/", (req, res, next) => {
-  // const error = createError(401, "Unauthorized");
-  // return next(error);
   logger.info("connected");
-  return res.status(201).send("This is Auth-Service route dasjdb");
+  return res.status(201).send("This is Auth-Service route");
 });
+
+// use routes
+app.use("/auth", authRoute);
 
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
   const statusCode = err.statusCode;
