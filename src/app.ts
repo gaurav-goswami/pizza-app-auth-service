@@ -9,11 +9,6 @@ import authRoute from "./routes/auth";
 
 const app = express();
 
-app.get("/", (req, res, next) => {
-  logger.info("connected");
-  return res.status(201).send("This is Auth-Service route");
-});
-
 // use routes
 app.use("/auth", authRoute);
 
