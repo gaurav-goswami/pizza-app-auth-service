@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import "reflect-metadata";
 import express, { Request, Response, NextFunction } from "express";
 import createError, { HttpError } from "http-errors";
 import logger from "./config/logger";
