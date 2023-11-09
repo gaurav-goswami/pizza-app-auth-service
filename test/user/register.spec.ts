@@ -3,6 +3,7 @@ import app from "../../src/app";
 import request from "supertest";
 import { AppDataSource } from "../../src/config/data-source";
 import { User } from "../../src/entity/User";
+import { Roles } from "../../src/constants";
 // import truncateTables from "../utils";
 
 describe("POST /auth/register", () => {
@@ -64,6 +65,22 @@ describe("POST /auth/register", () => {
       expect(users[0].firstName).toBe(data.firstName);
       expect(users[0].lastName).toBe(data.lastName);
       expect(users[0].email).toBe(data.email);
+    });
+
+    test("should assign customer role", async () => {
+      const data = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe@gmail.com",
+        password: "johndoe1234",
+      };
+
+      await request(app).post("/auth/register").send(data);
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+
+      expect(users[0]).toHaveProperty("role");
+      expect(users[0].role).toBe(Roles.CUSTOMER);
     });
   });
 
