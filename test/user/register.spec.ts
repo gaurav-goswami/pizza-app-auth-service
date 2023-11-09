@@ -3,7 +3,7 @@ import app from "../../src/app";
 import request from "supertest";
 import { AppDataSource } from "../../src/config/data-source";
 import { User } from "../../src/entity/User";
-import { truncateTables } from "../utils";
+// import truncateTables from "../utils";
 
 describe("POST /auth/register", () => {
   let connection: DataSource;
@@ -13,7 +13,9 @@ describe("POST /auth/register", () => {
   });
 
   beforeEach(async () => {
-    await truncateTables(connection);
+    // await truncateTables(connection);
+    await connection.dropDatabase();
+    await connection.synchronize();
   });
 
   afterAll(async () => {
@@ -59,6 +61,9 @@ describe("POST /auth/register", () => {
       const userRepository = connection.getRepository(User);
       const users = await userRepository.find();
       expect(users).toHaveLength(1);
+      expect(users[0].firstName).toBe(data.firstName);
+      expect(users[0].lastName).toBe(data.lastName);
+      expect(users[0].email).toBe(data.email);
     });
   });
 

@@ -8,6 +8,7 @@ import logger from "./config/logger";
 import authRoute from "./routes/auth";
 
 const app = express();
+app.use(express.json());
 
 // use routes
 app.use("/auth", authRoute);
