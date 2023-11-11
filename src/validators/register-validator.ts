@@ -4,6 +4,7 @@ export default checkSchema({
   email: {
     errorMessage: "Email Id is required",
     notEmpty: true,
+    trim: true,
   },
 });
 
