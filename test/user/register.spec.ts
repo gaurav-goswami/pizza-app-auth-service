@@ -136,8 +136,36 @@ describe("POST /auth/register", () => {
       expect(users).toHaveLength(0);
     });
 
-    test.todo("should return 400 status code if firstName is missing");
-    test.todo("should return 400 status code if lastName is missing");
+    test("should return 400 status code if firstName is missing", async () => {
+      const data = {
+        firstName: "",
+        lastName: "Doe",
+        email: "johndoe@gmail.com",
+        password: "johndoe1234",
+      };
+
+      const response = await request(app).post("/auth/register").send(data);
+      expect(response.status).toBe(400);
+
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users).toHaveLength(0);
+    });
+    test("should return 400 status code if lastName is missing", async () => {
+      const data = {
+        firstName: "John",
+        lastName: "",
+        email: "johndoe@gmail.com",
+        password: "johndoe1234",
+      };
+
+      const response = await request(app).post("/auth/register").send(data);
+      expect(response.status).toBe(400);
+
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users).toHaveLength(0);
+    });
     test.todo("should return 400 status code if password is missing");
   });
 
