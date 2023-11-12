@@ -203,7 +203,22 @@ describe("POST /auth/register", () => {
       expect(users[0].email).toBe("johndoe@gmail.com");
     });
 
-    test.todo("should return 400 status code if email is not valid");
+    test("should return 400 status code if email is not valid", async () => {
+      const data = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe.gmail,com",
+        password: "johndoe1234",
+      };
+
+      const response = await request(app).post("/auth/register").send(data);
+      expect(response.status).toBe(400);
+
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+
+      expect(users).toHaveLength(0);
+    });
 
     test("should return 400 status code if password length is less than 8 characters", async () => {
       const data = {

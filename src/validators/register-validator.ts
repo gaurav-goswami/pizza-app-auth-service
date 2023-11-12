@@ -13,6 +13,7 @@ export default checkSchema({
     errorMessage: "Email Id is required",
     notEmpty: true,
     trim: true,
+    isEmail: true,
   },
   password: {
     errorMessage: "Password is required",
