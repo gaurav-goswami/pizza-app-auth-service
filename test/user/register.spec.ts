@@ -151,6 +151,7 @@ describe("POST /auth/register", () => {
       const users = await userRepository.find();
       expect(users).toHaveLength(0);
     });
+
     test("should return 400 status code if lastName is missing", async () => {
       const data = {
         firstName: "John",
@@ -166,6 +167,7 @@ describe("POST /auth/register", () => {
       const users = await userRepository.find();
       expect(users).toHaveLength(0);
     });
+
     test("should return 400 status code if password is missing", async () => {
       const data = {
         firstName: "John",
@@ -202,8 +204,21 @@ describe("POST /auth/register", () => {
     });
 
     test.todo("should return 400 status code if email is not valid");
-    test.todo(
-      "should return 400 status code if password length is less than 8 characters",
-    );
+
+    test("should return 400 status code if password length is less than 8 characters", async () => {
+      const data = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe@gmail.com",
+        password: "short",
+      };
+
+      const response = await request(app).post("/auth/register").send(data);
+      expect(response.status).toBe(400);
+
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users).toHaveLength(0);
+    });
   });
 });

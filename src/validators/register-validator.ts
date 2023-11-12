@@ -17,6 +17,11 @@ export default checkSchema({
   password: {
     errorMessage: "Password is required",
     notEmpty: true,
+    isLength: {
+      options: {
+        min: 8,
+      },
+    },
   },
 });
 
