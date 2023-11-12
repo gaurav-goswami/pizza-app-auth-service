@@ -125,6 +125,7 @@ describe("POST /auth/register", () => {
       const data = {
         firstName: "John",
         lastName: "Doe",
+        email: "",
         password: "johndoe1234",
       };
 
@@ -234,6 +235,21 @@ describe("POST /auth/register", () => {
       const userRepository = connection.getRepository(User);
       const users = await userRepository.find();
       expect(users).toHaveLength(0);
+    });
+
+    test("should return an array of error of error messages if email is missing", async () => {
+      const data = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "",
+        password: "johndoe1234",
+      };
+
+      const response = await request(app).post("/auth/register").send(data);
+      expect(response.body).toHaveProperty("error");
+      expect(
+        (response.body as Record<string, string>).error.length,
+      ).toBeGreaterThan(0);
     });
   });
 });
