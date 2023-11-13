@@ -1,9 +1,12 @@
+import fs from "fs";
+import path from "path";
 import { NextFunction, Response } from "express";
 import { UserService } from "../services/userService";
 import { RegisterUser } from "../types";
 import { Logger } from "winston";
-import createHttpError from "http-errors";
 import { validationResult } from "express-validator/src/validation-result";
+import { JwtPayload, sign } from "jsonwebtoken";
+import createHttpError from "http-errors";
 
 class AuthController {
   constructor(
@@ -25,23 +28,37 @@ class AuthController {
       password: "",
     });
     try {
-      if (!email) {
-        const err = createHttpError(400, "Email id is missing");
-        next(err);
-      }
-
-      await this.userService.create({
+      const user = await this.userService.create({
         firstName,
         lastName,
         email,
         password,
       });
 
-      this.logger.info("user has been registered", { userId: 1 });
+      this.logger.info("user has been registered", { id: user.id });
 
-      const accessToken = "akjshdkjas";
+      const payload: JwtPayload = {
+        sub: String(user.id),
+        role: user.role,
+      };
+
+      let privateKey: Buffer;
+      try {
+        privateKey = fs.readFileSync(
+          path.join(__dirname, "../../certs/private.pem"),
+        );
+      } catch (error) {
+        const err = createHttpError(500, "Error while reading private key");
+        return next(err);
+      }
+
+      const accessToken = sign(payload, privateKey, {
+        algorithm: "RS256",
+        expiresIn: "1h",
+        issuer: "auth-service",
+      });
+
       const refreshToken = "amdsvmndasnmb";
-
       res.cookie("accessToken", accessToken, {
         domain: "localhost",
         sameSite: "strict",
@@ -56,7 +73,7 @@ class AuthController {
         httpOnly: true,
       });
 
-      res.status(201).json({ id: 1 });
+      res.status(201).json({ id: user.id });
     } catch (error) {
       return next(error);
     }
