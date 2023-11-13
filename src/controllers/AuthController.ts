@@ -38,6 +38,24 @@ class AuthController {
       });
 
       this.logger.info("user has been registered", { userId: 1 });
+
+      const accessToken = "akjshdkjas";
+      const refreshToken = "amdsvmndasnmb";
+
+      res.cookie("accessToken", accessToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60,
+        httpOnly: true,
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+        httpOnly: true,
+      });
+
       res.status(201).json({ id: 1 });
     } catch (error) {
       return next(error);
