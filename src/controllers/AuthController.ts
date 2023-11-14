@@ -3,10 +3,7 @@ import { UserService } from "../services/userService";
 import { RegisterUser } from "../types";
 import { Logger } from "winston";
 import { validationResult } from "express-validator/src/validation-result";
-import { JwtPayload, sign } from "jsonwebtoken";
-import { Config } from "../config";
-import { AppDataSource } from "../config/data-source";
-import { RefreshToken } from "../entity/RefreshToken";
+import { JwtPayload } from "jsonwebtoken";
 import { TokenService } from "../services/tokenService";
 
 class AuthController {
@@ -47,21 +44,11 @@ class AuthController {
       // access token
       const accessToken = this.tokenService.generateAccessToken(payload);
 
-      // Persisting refresh token;
-      const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365;
-      const refreshTokenRepo = AppDataSource.getRepository(RefreshToken);
-
-      const newRefreshToken = await refreshTokenRepo.save({
-        user: user,
-        expiresAt: new Date(Date.now() + MS_IN_YEAR),
-      });
-
-      const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
-        algorithm: "HS256",
-        expiresIn: "1y",
-        issuer: "auth-service",
-        jwtid: String(newRefreshToken.id),
-      });
+      // refresh token
+      const refreshToken = await this.tokenService.generateRefreshToken(
+        payload,
+        user,
+      );
 
       res.cookie("accessToken", accessToken, {
         domain: "localhost",
