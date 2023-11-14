@@ -1,20 +1,19 @@
-import fs from "fs";
-import path from "path";
 import { NextFunction, Response } from "express";
 import { UserService } from "../services/userService";
 import { RegisterUser } from "../types";
 import { Logger } from "winston";
 import { validationResult } from "express-validator/src/validation-result";
 import { JwtPayload, sign } from "jsonwebtoken";
-import createHttpError from "http-errors";
 import { Config } from "../config";
 import { AppDataSource } from "../config/data-source";
 import { RefreshToken } from "../entity/RefreshToken";
+import { TokenService } from "../services/tokenService";
 
 class AuthController {
   constructor(
     private userService: UserService,
     private logger: Logger,
+    private tokenService: TokenService,
   ) {}
 
   async register(req: RegisterUser, res: Response, next: NextFunction) {
@@ -45,21 +44,8 @@ class AuthController {
         role: user.role,
       };
 
-      let privateKey: Buffer;
-      try {
-        privateKey = fs.readFileSync(
-          path.join(__dirname, "../../certs/private.pem"),
-        );
-      } catch (error) {
-        const err = createHttpError(500, "Error while reading private key");
-        return next(err);
-      }
-
-      const accessToken = sign(payload, privateKey, {
-        algorithm: "RS256",
-        expiresIn: "1h",
-        issuer: "auth-service",
-      });
+      // access token
+      const accessToken = this.tokenService.generateAccessToken(payload);
 
       // Persisting refresh token;
       const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365;
