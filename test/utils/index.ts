@@ -24,6 +24,4 @@ export const isJwt = (token: string | null): boolean => {
   } catch (error) {
     return false;
   }
-
-  return false;
 };

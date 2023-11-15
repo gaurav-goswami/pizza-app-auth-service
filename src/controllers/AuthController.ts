@@ -1,16 +1,19 @@
 import { NextFunction, Response } from "express";
 import { UserService } from "../services/userService";
-import { RegisterUser } from "../types";
+import { LoginUser, RegisterUser } from "../types";
 import { Logger } from "winston";
 import { validationResult } from "express-validator/src/validation-result";
 import { JwtPayload } from "jsonwebtoken";
 import { TokenService } from "../services/tokenService";
+import createHttpError from "http-errors";
+import { CredentialService } from "../services/credentialService";
 
 class AuthController {
   constructor(
     private userService: UserService,
     private logger: Logger,
     private tokenService: TokenService,
+    private credentialService: CredentialService,
   ) {}
 
   async register(req: RegisterUser, res: Response, next: NextFunction) {
@@ -65,6 +68,30 @@ class AuthController {
       });
 
       res.status(201).json({ id: user.id });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async login(req: LoginUser, res: Response, next: NextFunction) {
+    const { email, password } = req.body;
+    try {
+      const user = await this.userService.findByEmail(email);
+      if (!user) {
+        const error = createHttpError(400, "Email Id or password is incorrect");
+        return next(error);
+      }
+
+      const isPasswordMatch = await this.credentialService.comparePassword(
+        password,
+        user.password,
+      );
+      if (!isPasswordMatch) {
+        const error = createHttpError(400, "Email Id or password is incorrect");
+        return next(error);
+      }
+
+      res.status(200).json("Logged In");
     } catch (error) {
       return next(error);
     }
