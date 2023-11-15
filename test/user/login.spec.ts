@@ -53,6 +53,47 @@ describe("POST /auth/login", () => {
         .send({ ...data, password: "nottherealpassword" });
       expect(response.status).toBe(400);
     });
+
+    test("should return access token and refresh token in cookies", async () => {
+      interface Headers {
+        ["set-cookie"]: string[];
+      }
+
+      let accessToken = null;
+      let refreshToken = null;
+
+      const data = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe@gmail.com",
+        password: "johndoe1234",
+        role: Roles.CUSTOMER,
+      };
+
+      const hashedPassword = await bcrypt.hash(data.password, 10);
+      const userRepository = connection.getRepository(User);
+      await userRepository.save({
+        ...data,
+        password: hashedPassword,
+      });
+
+      const response = await request(app)
+        .post("/auth/login")
+        .send({ email: data.email, password: data.password });
+
+      const cookies = (response.headers as Headers)["set-cookie"] || [];
+      cookies.forEach((token) => {
+        if (token.startsWith("accessToken=")) {
+          accessToken = token.split(";")[0].split("=")[1];
+        }
+        if (token.startsWith("refreshToken=")) {
+          refreshToken = token.split(";")[0].split("=")[1];
+        }
+      });
+
+      expect(accessToken).not.toBe(null);
+      expect(refreshToken).not.toBe(null);
+    });
   });
 
   describe("Fields are missing", () => {
