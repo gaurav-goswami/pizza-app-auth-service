@@ -7,6 +7,7 @@ import { JwtPayload } from "jsonwebtoken";
 import { TokenService } from "../services/tokenService";
 import createHttpError from "http-errors";
 import { CredentialService } from "../services/credentialService";
+import { Request } from "express-serve-static-core";
 
 class AuthController {
   constructor(
@@ -126,6 +127,10 @@ class AuthController {
     } catch (error) {
       return next(error);
     }
+  }
+
+  self(req: Request, res: Response) {
+    res.status(200).send("Self");
   }
 }
 

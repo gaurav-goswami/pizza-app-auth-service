@@ -42,4 +42,8 @@ router.post(
   },
 );
 
+router.get("/self", (req: Request, res: Response, next: NextFunction) => {
+  return authController.self(req, res, next);
+});
+
 export default router;
