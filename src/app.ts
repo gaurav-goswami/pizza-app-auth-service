@@ -1,14 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "reflect-metadata";
 import express, { Request, Response, NextFunction } from "express";
-import createError, { HttpError } from "http-errors";
+import { HttpError } from "http-errors";
 import logger from "./config/logger";
+import cookieParser from "cookie-parser";
 
 // routes import
 import authRoute from "./routes/auth";
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 // use routes
 app.use("/auth", authRoute);

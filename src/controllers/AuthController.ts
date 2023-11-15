@@ -1,13 +1,12 @@
 import { NextFunction, Response } from "express";
 import { UserService } from "../services/userService";
-import { LoginUser, RegisterUser } from "../types";
+import { AuthRequest, LoginUser, RegisterUser } from "../types";
 import { Logger } from "winston";
 import { validationResult } from "express-validator/src/validation-result";
 import { JwtPayload } from "jsonwebtoken";
 import { TokenService } from "../services/tokenService";
 import createHttpError from "http-errors";
 import { CredentialService } from "../services/credentialService";
-import { Request } from "express-serve-static-core";
 
 class AuthController {
   constructor(
@@ -129,8 +128,10 @@ class AuthController {
     }
   }
 
-  self(req: Request, res: Response) {
-    res.status(200).send("Self");
+  async self(req: AuthRequest, res: Response) {
+    const user = await this.userService.findById(Number(req.auth.sub));
+
+    res.status(200).json(user);
   }
 }
 

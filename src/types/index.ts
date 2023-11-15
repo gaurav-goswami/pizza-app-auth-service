@@ -19,3 +19,10 @@ export interface LoginData {
 export interface LoginUser extends Request {
   body: LoginData;
 }
+
+export interface AuthRequest extends Request {
+  auth: {
+    sub: string;
+    role: string;
+  };
+}
