@@ -8,6 +8,7 @@ import registerValidator from "../validators/register-validator";
 import { TokenService } from "../services/tokenService";
 import { RefreshToken } from "../entity/RefreshToken";
 import { CredentialService } from "../services/credentialService";
+import loginValidator from "../validators/login-validator";
 
 const router = express.Router();
 
@@ -33,8 +34,12 @@ router.post(
   },
 );
 
-router.post("/login", (req: Request, res: Response, next: NextFunction) => {
-  return authController.login(req, res, next);
-});
+router.post(
+  "/login",
+  loginValidator,
+  (req: Request, res: Response, next: NextFunction) => {
+    return authController.login(req, res, next);
+  },
+);
 
 export default router;

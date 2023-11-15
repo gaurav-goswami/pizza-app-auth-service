@@ -74,6 +74,12 @@ class AuthController {
   }
 
   async login(req: LoginUser, res: Response, next: NextFunction) {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      return res.status(400).json({ error: result.array() });
+    }
+
     const { email, password } = req.body;
     try {
       const user = await this.userService.findByEmail(email);

@@ -55,5 +55,25 @@ describe("POST /auth/login", () => {
     });
   });
 
-  describe("Fields are missing", () => {});
+  describe("Fields are missing", () => {
+    test("should return array of error if email is missing", async () => {
+      const data = {
+        password: "johndoe1234",
+      };
+      const response = await request(app).post("/auth/login").send(data);
+      expect(
+        (response.body as Record<string, string>).error.length,
+      ).toBeGreaterThan(0);
+    });
+
+    test("should return array of error if password is missing", async () => {
+      const data = {
+        email: "johndoe@gmail.com",
+      };
+      const response = await request(app).post("/auth/login").send(data);
+      expect(
+        (response.body as Record<string, string>).error.length,
+      ).toBeGreaterThan(0);
+    });
+  });
 });
