@@ -44,14 +44,12 @@ class AuthController {
         role: user.role,
       };
 
-      // access token
       const accessToken = this.tokenService.generateAccessToken(payload);
-
-      // refresh token
-      const refreshToken = await this.tokenService.generateRefreshToken(
-        payload,
-        user,
-      );
+      const newRefreshToken = await this.tokenService.persistRefreshToken(user);
+      const refreshToken = this.tokenService.generateRefreshToken({
+        ...payload,
+        id: String(newRefreshToken.id),
+      });
 
       res.cookie("accessToken", accessToken, {
         domain: "localhost",
@@ -103,10 +101,14 @@ class AuthController {
       };
 
       const accessToken = this.tokenService.generateAccessToken(payload);
-      const refreshToken = await this.tokenService.generateRefreshToken(
-        payload,
-        user,
-      );
+
+      // Persist the refresh token
+      const newRefreshToken = await this.tokenService.persistRefreshToken(user);
+
+      const refreshToken = this.tokenService.generateRefreshToken({
+        ...payload,
+        id: String(newRefreshToken.id),
+      });
 
       res.cookie("accessToken", accessToken, {
         domain: "localhost",
@@ -122,7 +124,8 @@ class AuthController {
         httpOnly: true,
       });
 
-      res.status(200).json("Logged In");
+      this.logger.info("User has been logged in", { id: user.id });
+      res.json({ id: user.id });
     } catch (error) {
       return next(error);
     }
@@ -132,6 +135,52 @@ class AuthController {
     const user = await this.userService.findById(Number(req.auth.sub));
 
     res.status(200).json({ ...user, password: undefined });
+  }
+
+  async refresh(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const payload: JwtPayload = {
+        sub: req.auth?.sub,
+        role: req.auth?.role,
+      };
+
+      const user = await this.userService.findById(Number(req.auth?.sub));
+      if (!user) {
+        const error = createHttpError(
+          400,
+          "User with the token could not find",
+        );
+        return next(error);
+      }
+
+      const accessToken = this.tokenService.generateAccessToken(payload);
+      const newRefreshToken = await this.tokenService.persistRefreshToken(user);
+
+      await this.tokenService.deleteRefreshToken(Number(req.auth.id));
+
+      const refreshToken = this.tokenService.generateRefreshToken({
+        ...payload,
+        id: String(newRefreshToken.id),
+      });
+
+      res.cookie("accessToken", accessToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60,
+        httpOnly: true,
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+        httpOnly: true,
+      });
+
+      res.json({});
+    } catch (error) {
+      next(error);
+    }
   }
 }
 

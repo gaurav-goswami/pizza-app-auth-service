@@ -30,21 +30,27 @@ export class TokenService {
     return accessToken;
   }
 
-  async generateRefreshToken(payload: JwtPayload, user: User) {
-    const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365;
-
-    const newRefreshToken = await this.refreshTokenRepo.save({
-      user,
-      expiresAt: new Date(Date.now() + MS_IN_YEAR),
-    });
-
+  generateRefreshToken(payload: JwtPayload) {
     const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
       algorithm: "HS256",
       expiresIn: "1y",
       issuer: "auth-service",
-      jwtid: String(newRefreshToken.id),
+      jwtid: String(payload.id),
     });
-
     return refreshToken;
+  }
+
+  async persistRefreshToken(user: User) {
+    const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365;
+
+    const newRefreshToken = await this.refreshTokenRepo.save({
+      user: user,
+      expiresAt: new Date(Date.now() + MS_IN_YEAR),
+    });
+    return newRefreshToken;
+  }
+
+  async deleteRefreshToken(tokenId: number) {
+    return await this.refreshTokenRepo.delete({ id: tokenId });
   }
 }
