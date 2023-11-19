@@ -11,7 +11,9 @@
     "lint:check": "eslint .",
     "prepare": "husky install",
     "test": "jest --runInBand --watch",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate",
+    "migration:run": "typeorm-ts-node-commonjs migration:run",
+    "migration:create": "typeorm-ts-node-commonjs migration:create"
   },
   "keywords": [],
   "author": "",
