@@ -6,6 +6,8 @@ import { AppDataSource } from "../config/data-source";
 import { Tenant } from "../entity/Tenant";
 import logger from "../config/logger";
 import authenticate from "../middlewares/authenticate";
+import { canAccess } from "../middlewares/canAccess";
+import { Roles } from "../constants";
 
 const Router = express.Router();
 
@@ -16,6 +18,7 @@ const tenantController = new TenantController(tenantService, logger);
 Router.post(
   "/",
   authenticate,
+  canAccess([Roles.ADMIN]),
   (req: ITenantRequest, res: Response, next: NextFunction) => {
     return tenantController.create(req, res, next);
   },
