@@ -1,4 +1,4 @@
-import express, { NextFunction, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import TenantController from "../controllers/TenantContoller";
 import { ITenantRequest } from "../types";
 import { TenantService } from "../services/tenantService";
@@ -21,6 +21,15 @@ Router.post(
   canAccess([Roles.ADMIN]),
   (req: ITenantRequest, res: Response, next: NextFunction) => {
     return tenantController.create(req, res, next);
+  },
+);
+
+Router.get(
+  "/",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response, next: NextFunction) => {
+    return tenantController.tenantList(req, res, next);
   },
 );
 

@@ -14,4 +14,13 @@ export class TenantService {
       throw error;
     }
   }
+
+  async getTenants() {
+    try {
+      return await this.tenantRepository.find();
+    } catch (err) {
+      const error = createHttpError(404, "Tenants not found");
+      throw error;
+    }
+  }
 }
