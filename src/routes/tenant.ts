@@ -35,4 +35,13 @@ Router.get(
   },
 );
 
+Router.get(
+  "/:id",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response, next: NextFunction) => {
+    return tenantController.getTenant(req, res, next);
+  },
+);
+
 export default Router;

@@ -23,4 +23,16 @@ export class TenantService {
       throw error;
     }
   }
+
+  async getTenantById(tenantId: number) {
+    try {
+      return await this.tenantRepository.findOne({ where: { id: tenantId } });
+    } catch (err) {
+      const error = createHttpError(
+        404,
+        `Tenant with ID ${tenantId} not found`,
+      );
+      throw error;
+    }
+  }
 }
