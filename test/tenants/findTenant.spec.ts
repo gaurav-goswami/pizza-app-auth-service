@@ -76,5 +76,21 @@ describe("GET /tenants/ID", () => {
     });
   });
 
-  describe("ID is missing", () => {});
+  describe("ID is missing", () => {
+    test("should return 422 status if null is passed as ID", async () => {
+      const tenantData = {
+        name: "Tenant name",
+        address: "Tenant address",
+      };
+
+      const tenantRepo = connection.getRepository(Tenant);
+      await tenantRepo.save(tenantData);
+
+      const response = await request(app)
+        .get("/tenants/null")
+        .set("Cookie", [`accessToken=${adminToken}`]);
+
+      expect(response.status).toBe(422);
+    });
+  });
 });
