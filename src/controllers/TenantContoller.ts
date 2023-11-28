@@ -44,7 +44,7 @@ export default class TenantController {
 
     const { id } = req.params;
     if (isNaN(Number(id))) {
-      return next(createHttpError(400, "Invalid url param"));
+      return next(createHttpError(422, "Invalid url param"));
     }
     try {
       const tenant = await this.tenantService.getTenantById(Number(id));
