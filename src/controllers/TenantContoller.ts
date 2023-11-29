@@ -3,6 +3,7 @@ import { ITenantRequest } from "../types";
 import { TenantService } from "../services/tenantService";
 import { Logger } from "winston";
 import createHttpError from "http-errors";
+import { validationResult } from "express-validator";
 
 export default class TenantController {
   constructor(
@@ -11,6 +12,11 @@ export default class TenantController {
   ) {}
 
   async create(req: ITenantRequest, res: Response, next: NextFunction) {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      return res.status(400).json({ error: result.array() });
+    }
+
     const { name, address } = req.body;
 
     this.logger.debug("Request for creating a tenant", req.body);
@@ -54,5 +60,9 @@ export default class TenantController {
     } catch (error) {
       return next(error);
     }
+  }
+
+  updateTenant(req: Request, res: Response) {
+    res.status(204).json({});
   }
 }
