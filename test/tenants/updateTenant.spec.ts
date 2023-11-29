@@ -4,8 +4,9 @@ import { AppDataSource } from "../../src/config/data-source";
 import createJWKSMock from "mock-jwks";
 import { Roles } from "../../src/constants";
 import app from "../../src/app";
+import { Tenant } from "../../src/entity/Tenant";
 
-describe("PUT /tenant/id", () => {
+describe("PATCH /tenant/id", () => {
   let jwks: ReturnType<typeof createJWKSMock>;
   let connection: DataSource;
   let adminToken: string;
@@ -40,10 +41,34 @@ describe("PUT /tenant/id", () => {
     };
 
     const response = await request(app)
-      .put("/tenants/1")
+      .patch("/tenants/1")
       .set("Cookie", [`accessToken=${adminToken}`])
       .send(updatedData);
 
     expect(response.status).toBe(204);
+  });
+
+  test("should updated the tenant in the database", async () => {
+    const tenantData = {
+      name: "Tenant Name",
+      address: "Tenant address",
+    };
+
+    const updatedData = {
+      name: "Tenant name (new)",
+      address: "Tenant address (new)",
+    };
+
+    const tenantRepo = connection.getRepository(Tenant);
+    await tenantRepo.save(tenantData);
+
+    await request(app)
+      .patch("/tenants/1")
+      .set("Cookie", [`accessToken=${adminToken}`])
+      .send(updatedData);
+
+    const tenants = await tenantRepo.find();
+    expect(tenants[0].name).toBe(updatedData.name);
+    expect(tenants[0].address).toBe(updatedData.address);
   });
 });

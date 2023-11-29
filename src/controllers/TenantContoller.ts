@@ -62,7 +62,24 @@ export default class TenantController {
     }
   }
 
-  updateTenant(req: Request, res: Response) {
-    res.status(204).json({});
+  async updateTenant(req: ITenantRequest, res: Response, next: NextFunction) {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      return res.status(400).json({ error: result.array() });
+    }
+
+    const { name, address } = req.body;
+    const { id } = req.params;
+    if (isNaN(Number(id))) {
+      return next(createHttpError(422, "Invalid url param"));
+    }
+
+    this.logger.info("New request to update a tenant", req.body);
+    try {
+      await this.tenantService.updateTenantById(Number(id), { name, address });
+      res.status(204).json({ message: "Tenant updated", id });
+    } catch (error) {
+      return next(error);
+    }
   }
 }

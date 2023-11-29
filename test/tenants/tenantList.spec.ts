@@ -39,9 +39,4 @@ describe("GET /tenants", () => {
       .set("Cookie", [`accessToken=${adminToken}`]);
     expect(response.status).toBe(200);
   });
-
-  test("should return 401 status code if user is not admin", async () => {
-    const response = await request(app).get("/tenants");
-    expect(response.status).toBe(401);
-  });
 });

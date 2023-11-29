@@ -35,4 +35,13 @@ export class TenantService {
       throw error;
     }
   }
+
+  async updateTenantById(tenantId: number, tenantData: ITenantData) {
+    try {
+      return await this.tenantRepository.update(tenantId, tenantData);
+    } catch (err) {
+      const error = createHttpError(404, "Tenant not found");
+      throw error;
+    }
+  }
 }

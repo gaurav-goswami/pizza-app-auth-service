@@ -26,28 +26,19 @@ Router.post(
   },
 );
 
-Router.get(
-  "/",
-  authenticate,
-  canAccess([Roles.ADMIN]),
-  (req: Request, res: Response, next: NextFunction) => {
-    return tenantController.tenantList(req, res, next);
-  },
-);
+Router.get("/", (req: Request, res: Response, next: NextFunction) => {
+  return tenantController.tenantList(req, res, next);
+});
 
-Router.get(
+Router.get("/:id", (req: Request, res: Response, next: NextFunction) => {
+  return tenantController.getTenant(req, res, next);
+});
+
+Router.patch(
   "/:id",
   authenticate,
   canAccess([Roles.ADMIN]),
-  (req: Request, res: Response, next: NextFunction) => {
-    return tenantController.getTenant(req, res, next);
-  },
-);
-
-Router.put(
-  "/:id",
-  authenticate,
-  canAccess([Roles.ADMIN]),
+  tenantValidator,
   (req: Request, res: Response, next: NextFunction) => {
     return tenantController.updateTenant(req, res, next);
   },
