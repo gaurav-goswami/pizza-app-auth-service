@@ -71,4 +71,34 @@ describe("PATCH /tenant/id", () => {
     expect(tenants[0].name).toBe(updatedData.name);
     expect(tenants[0].address).toBe(updatedData.address);
   });
+
+  test("should not update tenant if user is not admin", async () => {
+    const tenantData = {
+      name: "Tenant Name",
+      address: "Tenant address",
+    };
+
+    const updatedData = {
+      name: "Tenant name (new)",
+      address: "Tenant address (new)",
+    };
+
+    const managerToken = jwks.token({
+      sub: "1",
+      role: Roles.MANAGER,
+    });
+
+    const tenantRepo = connection.getRepository(Tenant);
+    await tenantRepo.save(tenantData);
+
+    const response = await request(app)
+      .patch("/tenants/1")
+      .set("Cookie", [`accessToken=${managerToken}`])
+      .send(updatedData);
+
+    const tenants = await tenantRepo.find();
+    expect(response.status).toBe(403);
+    expect(tenants[0].name).not.toBe(updatedData.name);
+    expect(tenants[0].address).not.toBe(updatedData.address);
+  });
 });
