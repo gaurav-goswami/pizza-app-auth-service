@@ -44,4 +44,13 @@ Router.patch(
   },
 );
 
+Router.delete(
+  "/:id",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response) => {
+    return tenantController.deleteTenant(req, res);
+  },
+);
+
 export default Router;

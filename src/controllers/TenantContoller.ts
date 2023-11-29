@@ -82,4 +82,8 @@ export default class TenantController {
       return next(error);
     }
   }
+
+  deleteTenant(req: Request, res: Response) {
+    res.json({});
+  }
 }
