@@ -44,4 +44,8 @@ export class TenantService {
       throw error;
     }
   }
+
+  async deleteTenantById(tenantId: number) {
+    return await this.tenantRepository.delete(tenantId);
+  }
 }

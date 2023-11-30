@@ -48,8 +48,8 @@ Router.delete(
   "/:id",
   authenticate,
   canAccess([Roles.ADMIN]),
-  (req: Request, res: Response) => {
-    return tenantController.deleteTenant(req, res);
+  (req: Request, res: Response, next: NextFunction) => {
+    return tenantController.deleteTenant(req, res, next);
   },
 );
 

@@ -83,7 +83,13 @@ export default class TenantController {
     }
   }
 
-  deleteTenant(req: Request, res: Response) {
-    res.json({});
+  async deleteTenant(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params;
+    if (isNaN(Number(id))) {
+      return next(createHttpError(422, "Invalid url param"));
+    }
+
+    await this.tenantService.deleteTenantById(Number(id));
+    return res.json({});
   }
 }
