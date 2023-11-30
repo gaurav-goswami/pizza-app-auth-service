@@ -46,6 +46,11 @@ export class TenantService {
   }
 
   async deleteTenantById(tenantId: number) {
-    return await this.tenantRepository.delete(tenantId);
+    try {
+      return await this.tenantRepository.delete(tenantId);
+    } catch (err) {
+      const error = createHttpError(404, "Tenant not found");
+      throw error;
+    }
   }
 }

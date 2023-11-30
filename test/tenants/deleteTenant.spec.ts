@@ -56,4 +56,36 @@ describe("DELETE /tenants/id", () => {
     const tenants = await tenantRepo.find();
     expect(tenants).toHaveLength(0);
   });
+
+  test("should not delete the tenant if user is not admin", async () => {
+    const tenantData = {
+      name: "Tenant name",
+      address: "Tenant address",
+    };
+
+    const managerToken = jwks.token({
+      sub: "1",
+      role: Roles.MANAGER,
+    });
+
+    const tenantRepo = connection.getRepository(Tenant);
+    await tenantRepo.save(tenantData);
+
+    await request(app)
+      .delete("/tenant/1")
+      .set("Cookie", [`accessToken=${managerToken}`]);
+
+    const tenants = await tenantRepo.find();
+    expect(tenants.length).toBeGreaterThan(0);
+    expect(tenants[0].name).toBe(tenantData.name);
+    expect(tenants[0].address).toBe(tenantData.address);
+  });
+
+  test("should return status 404 if tenant not found", async () => {
+    const response = await request(app)
+      .delete("/tenant/2")
+      .set("Cookie", [`accessToken=${adminToken}`]);
+
+    expect(response.status).toBe(404);
+  });
 });

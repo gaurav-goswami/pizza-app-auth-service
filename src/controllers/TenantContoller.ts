@@ -89,7 +89,15 @@ export default class TenantController {
       return next(createHttpError(422, "Invalid url param"));
     }
 
-    await this.tenantService.deleteTenantById(Number(id));
-    return res.json({});
+    this.logger.info("Request to delete a tenant", { tenantId: id });
+
+    try {
+      await this.tenantService.deleteTenantById(Number(id));
+
+      this.logger.info("Tenant has been deleted", { tenantId: id });
+      return res.json({ tenantId: id });
+    } catch (error) {
+      return next(error);
+    }
   }
 }
