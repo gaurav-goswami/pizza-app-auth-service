@@ -4,6 +4,7 @@ import { DataSource } from "typeorm";
 import createJWKSMock from "mock-jwks";
 import { AppDataSource } from "../../src/config/data-source";
 import { Roles } from "../../src/constants";
+import { Tenant } from "../../src/entity/Tenant";
 
 describe("DELETE /tenants/id", () => {
   let adminToken: string;
@@ -37,7 +38,22 @@ describe("DELETE /tenants/id", () => {
     const response = await request(app)
       .delete("/tenants/1")
       .set("Cookie", [`accessToken=${adminToken}`]);
-
     expect(response.status).toBe(200);
+  });
+
+  test("should delete the tenant from database", async () => {
+    const tenantData = {
+      name: "Tenant name",
+      address: "Tenant address",
+    };
+
+    const tenantRepo = connection.getRepository(Tenant);
+    await tenantRepo.save(tenantData);
+    await request(app)
+      .delete("/tenants/1")
+      .set("Cookie", [`accessToken=${adminToken}`]);
+
+    const tenants = await tenantRepo.find();
+    expect(tenants).toHaveLength(0);
   });
 });
