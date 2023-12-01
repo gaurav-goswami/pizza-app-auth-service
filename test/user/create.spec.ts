@@ -92,4 +92,24 @@ describe("POST /users", () => {
     expect(users).toHaveLength(1);
     expect(users[0].role).toBe(Roles.MANAGER);
   });
+
+  test("should ensure that only admin can create managers", async () => {
+    const tenantData = {
+      firstName: "John",
+      lastName: "Doe",
+      email: "johndoe@gmail.com",
+      password: "johndoe1234",
+      tenantId: 1,
+    };
+    const managerToken = jwks.token({
+      sub: "2",
+      role: Roles.MANAGER,
+    });
+    const response = await request(app)
+      .post("/users")
+      .set("Cookie", [`accessToken=${managerToken}`])
+      .send(tenantData);
+
+    expect(response.status).toBe(403);
+  });
 });
