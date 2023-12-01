@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 // routes import
 import authRoute from "./routes/auth";
 import tenantRoute from "./routes/tenant";
+import usersRoute from "./routes/user";
 
 const app = express();
 app.use(express.static("public"));
@@ -17,6 +18,7 @@ app.use(cookieParser());
 // use routes
 app.use("/auth", authRoute);
 app.use("/tenants", tenantRoute);
+app.use("/users", usersRoute);
 
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
   logger.error(err.message);

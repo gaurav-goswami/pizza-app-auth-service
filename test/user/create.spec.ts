@@ -1,0 +1,52 @@
+import createJWKSMock from "mock-jwks";
+import request from "supertest";
+import { DataSource } from "typeorm";
+import { AppDataSource } from "../../src/config/data-source";
+import { Roles } from "../../src/constants";
+import app from "../../src/app";
+
+describe("POST /users", () => {
+  let jwks: ReturnType<typeof createJWKSMock>;
+  let connection: DataSource;
+  let adminToken: string;
+
+  beforeAll(async () => {
+    jwks = createJWKSMock("http://localhost:5501");
+    connection = await AppDataSource.initialize();
+  });
+
+  beforeEach(async () => {
+    jwks.start();
+    await connection.dropDatabase();
+    await connection.synchronize();
+    adminToken = jwks.token({
+      sub: "1",
+      role: Roles.ADMIN,
+    });
+  });
+
+  afterEach(() => {
+    jwks.stop();
+  });
+
+  afterAll(async () => {
+    await connection.destroy();
+  });
+
+  test("should return status 201", async () => {
+    const tenantData = {
+      firstName: "John",
+      lastName: "Doe",
+      email: "johndoe@gmail.com",
+      password: "johndoe1234",
+      tenantId: 1,
+    };
+
+    const response = await request(app)
+      .post("/users")
+      .set("Cookie", [`accessToken=${adminToken}`])
+      .send(tenantData);
+
+    expect(response.status).toBe(201);
+  });
+});
