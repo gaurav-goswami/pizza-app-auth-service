@@ -4,6 +4,7 @@ import { DataSource } from "typeorm";
 import { AppDataSource } from "../../src/config/data-source";
 import { Roles } from "../../src/constants";
 import app from "../../src/app";
+import { User } from "../../src/entity/User";
 
 describe("POST /users", () => {
   let jwks: ReturnType<typeof createJWKSMock>;
@@ -48,5 +49,26 @@ describe("POST /users", () => {
       .send(tenantData);
 
     expect(response.status).toBe(201);
+  });
+
+  test("should persist user in the database", async () => {
+    const tenantData = {
+      firstName: "John",
+      lastName: "Doe",
+      email: "johndoe@gmail.com",
+      password: "johndoe1234",
+      tenantId: 1,
+    };
+
+    await request(app)
+      .post("/users")
+      .set("Cookie", [`accessToken=${adminToken}`])
+      .send(tenantData);
+
+    const userRepo = connection.getRepository(User);
+    const users = await userRepo.find();
+
+    expect(users).toHaveLength(1);
+    expect(users[0].email).toBe(tenantData.email);
   });
 });

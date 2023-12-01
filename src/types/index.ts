@@ -45,3 +45,7 @@ export interface ITenantData {
 export interface ITenantRequest extends Request {
   body: ITenantData;
 }
+
+export interface CreateUserRequest extends Request {
+  body: UserData;
+}
