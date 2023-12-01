@@ -71,4 +71,25 @@ describe("POST /users", () => {
     expect(users).toHaveLength(1);
     expect(users[0].email).toBe(tenantData.email);
   });
+
+  test("should create a manager user", async () => {
+    const tenantData = {
+      firstName: "John",
+      lastName: "Doe",
+      email: "johndoe@gmail.com",
+      password: "johndoe1234",
+      tenantId: 1,
+    };
+
+    await request(app)
+      .post("/users")
+      .set("Cookie", [`accessToken=${adminToken}`])
+      .send(tenantData);
+
+    const userRepo = connection.getRepository(User);
+    const users = await userRepo.find();
+
+    expect(users).toHaveLength(1);
+    expect(users[0].role).toBe(Roles.MANAGER);
+  });
 });

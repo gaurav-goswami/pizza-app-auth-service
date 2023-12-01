@@ -1,6 +1,7 @@
 import { NextFunction, Response } from "express";
 import { UserService } from "../services/userService";
 import { CreateUserRequest } from "../types";
+import { Roles } from "../constants";
 
 export default class UserController {
   constructor(private userService: UserService) {}
@@ -14,6 +15,7 @@ export default class UserController {
         lastName,
         email,
         password,
+        role: Roles.MANAGER,
       });
       res.status(201).json({ id: user.id });
     } catch (error) {
