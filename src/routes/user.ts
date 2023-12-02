@@ -24,4 +24,8 @@ Router.post(
   },
 );
 
+Router.get("/", (req: Request, res: Response) => {
+  return userController.usersList(req, res);
+});
+
 export default Router;

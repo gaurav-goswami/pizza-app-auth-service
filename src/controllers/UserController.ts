@@ -1,12 +1,18 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/userService";
 import { CreateUserRequest } from "../types";
 import { Roles } from "../constants";
+import { validationResult } from "express-validator";
 
 export default class UserController {
   constructor(private userService: UserService) {}
 
   async createUser(req: CreateUserRequest, res: Response, next: NextFunction) {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      return res.status(400).json({ error: result.array() });
+    }
+
     const { firstName, lastName, email, password } = req.body;
 
     try {
@@ -21,5 +27,9 @@ export default class UserController {
     } catch (error) {
       return next(error);
     }
+  }
+
+  usersList(req: Request, res: Response) {
+    res.json({});
   }
 }
