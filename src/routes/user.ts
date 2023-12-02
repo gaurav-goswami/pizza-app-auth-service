@@ -6,6 +6,7 @@ import { User } from "../entity/User";
 import authenticate from "../middlewares/authenticate";
 import { canAccess } from "../middlewares/canAccess";
 import { Roles } from "../constants";
+import createUserValidator from "../validators/create-user-validator";
 
 const Router = express.Router();
 
@@ -17,6 +18,7 @@ Router.post(
   "/",
   authenticate,
   canAccess([Roles.ADMIN]),
+  createUserValidator,
   (req: Request, res: Response, next: NextFunction) => {
     return userController.createUser(req, res, next);
   },
