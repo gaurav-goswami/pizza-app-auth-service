@@ -47,4 +47,8 @@ export default class UserController {
       return next(error);
     }
   }
+
+  getUser(req: Request, res: Response) {
+    res.json({});
+  }
 }

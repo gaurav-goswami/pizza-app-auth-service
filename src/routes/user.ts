@@ -34,4 +34,13 @@ Router.get(
   },
 );
 
+Router.get(
+  "/:id",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response) => {
+    return userController.getUser(req, res);
+  },
+);
+
 export default Router;

@@ -65,10 +65,18 @@ describe("GET /users", () => {
     const userRepo = connection.getRepository(User);
     await userRepo.save({ ...managerData, role: Roles.MANAGER });
 
+    interface IResponse {
+      firstName: string;
+      lastName: string;
+      email: string;
+      role: string;
+    }
+
     const response = await request(app)
       .get("/users")
       .set("Cookie", [`accessToken=${adminToken}`]);
 
     expect((response.body as Record<string, string>).length).toBeGreaterThan(0);
+    expect((response.body as IResponse[])[0].role).toBe(Roles.MANAGER);
   });
 });
