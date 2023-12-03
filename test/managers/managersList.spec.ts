@@ -4,6 +4,7 @@ import { DataSource } from "typeorm";
 import { AppDataSource } from "../../src/config/data-source";
 import { Roles } from "../../src/constants";
 import app from "../../src/app";
+import { User } from "../../src/entity/User";
 
 describe("GET /users", () => {
   let jwks: ReturnType<typeof createJWKSMock>;
@@ -50,5 +51,24 @@ describe("GET /users", () => {
       .set("Cookie", [`accessToken=${managerToken}`]);
 
     expect(response.status).toBe(403);
+  });
+
+  test("should return managers list", async () => {
+    const managerData = {
+      firstName: "John",
+      lastName: "Doe",
+      email: "johndoe@gmail.com",
+      password: "johndoe1234",
+      tenantId: 1,
+    };
+
+    const userRepo = connection.getRepository(User);
+    await userRepo.save({ ...managerData, role: Roles.MANAGER });
+
+    const response = await request(app)
+      .get("/users")
+      .set("Cookie", [`accessToken=${adminToken}`]);
+
+    expect((response.body as Record<string, string>).length).toBeGreaterThan(0);
   });
 });

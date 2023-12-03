@@ -7,12 +7,13 @@ import authenticate from "../middlewares/authenticate";
 import { canAccess } from "../middlewares/canAccess";
 import { Roles } from "../constants";
 import createUserValidator from "../validators/create-user-validator";
+import logger from "../config/logger";
 
 const Router = express.Router();
 
 const userRepository = AppDataSource.getRepository(User);
 const userService = new UserService(userRepository);
-const userController = new UserController(userService);
+const userController = new UserController(userService, logger);
 
 Router.post(
   "/",
@@ -28,8 +29,8 @@ Router.get(
   "/",
   authenticate,
   canAccess([Roles.ADMIN]),
-  (req: Request, res: Response) => {
-    return userController.usersList(req, res);
+  (req: Request, res: Response, next: NextFunction) => {
+    return userController.usersList(req, res, next);
   },
 );
 
