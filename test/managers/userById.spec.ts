@@ -86,5 +86,24 @@ describe("GET /users/id", () => {
 
       expect((response.body as Record<string, string>).id).toBe(id);
     });
+
+    test("should return 400 status if there is no user with the ID", async () => {
+      const id = 2;
+      const response = await request(app)
+        .get(`/users/${id}`)
+        .set("Cookie", [`accessToken=${adminToken}`]);
+
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe("ID is missing", () => {
+    test("should return 422 status if null is passed as ID or ID is missing", async () => {
+      const response = await request(app)
+        .get(`/users/null`)
+        .set("Cookie", [`accessToken=${adminToken}`]);
+
+      expect(response.status).toBe(422);
+    });
   });
 });
