@@ -4,6 +4,7 @@ import { CreateUserRequest } from "../types";
 import { Roles } from "../constants";
 import { validationResult } from "express-validator";
 import { Logger } from "winston";
+import createHttpError from "http-errors";
 
 export default class UserController {
   constructor(
@@ -48,7 +49,25 @@ export default class UserController {
     }
   }
 
-  getUser(req: Request, res: Response) {
-    res.json({});
+  async getUser(req: Request, res: Response, next: NextFunction) {
+    this.logger.info("Request to get a user", { id: req.params });
+
+    const { id } = req.params;
+    if (isNaN(Number(id))) {
+      return next(createHttpError(422, "Invalid url param"));
+    }
+
+    try {
+      const user = await this.userService.userById(Number(id));
+
+      if (!user) {
+        return next(createHttpError(400, "User does not exist"));
+      }
+
+      this.logger.info("User fetched");
+      res.json(user);
+    } catch (error) {
+      return next(error);
+    }
   }
 }
