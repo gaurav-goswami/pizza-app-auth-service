@@ -90,4 +90,14 @@ describe("PATCH /users/id", () => {
       expect(user[0].role).toBe(updatedDetails.role);
     });
   });
+
+  describe("ID is missing", () => {
+    test("should return 422 status if null is passed as ID or ID is missing", async () => {
+      const response = await request(app)
+        .get(`/users/null`)
+        .set("Cookie", [`accessToken=${adminToken}`]);
+
+      expect(response.status).toBe(422);
+    });
+  });
 });
