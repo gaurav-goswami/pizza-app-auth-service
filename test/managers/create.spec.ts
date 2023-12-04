@@ -46,7 +46,7 @@ describe("POST /users", () => {
     const response = await request(app)
       .post("/users")
       .set("Cookie", [`accessToken=${adminToken}`])
-      .send(tenantData);
+      .send({ ...tenantData, role: Roles.MANAGER });
 
     expect(response.status).toBe(201);
   });
@@ -63,7 +63,7 @@ describe("POST /users", () => {
     await request(app)
       .post("/users")
       .set("Cookie", [`accessToken=${adminToken}`])
-      .send(tenantData);
+      .send({ ...tenantData, role: Roles.MANAGER });
 
     const userRepo = connection.getRepository(User);
     const users = await userRepo.find();
@@ -84,7 +84,7 @@ describe("POST /users", () => {
     await request(app)
       .post("/users")
       .set("Cookie", [`accessToken=${adminToken}`])
-      .send(tenantData);
+      .send({ ...tenantData, role: Roles.MANAGER });
 
     const userRepo = connection.getRepository(User);
     const users = await userRepo.find();
