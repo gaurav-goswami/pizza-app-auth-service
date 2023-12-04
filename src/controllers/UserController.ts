@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/userService";
-import { CreateUserRequest } from "../types";
+import { CreateUserRequest, UpdateUserRequest } from "../types";
 import { Roles } from "../constants";
 import { validationResult } from "express-validator";
 import { Logger } from "winston";
@@ -71,7 +71,27 @@ export default class UserController {
     }
   }
 
-  updateUser(req: Request, res: Response) {
-    res.json({});
+  async updateUser(req: UpdateUserRequest, res: Response, next: NextFunction) {
+    this.logger.info("New request to update a user");
+
+    const { id } = req.params;
+    if (isNaN(Number(id))) {
+      return next(createHttpError(422, "Invalid url parameter"));
+    }
+
+    const { firstName, lastName, role } = req.body;
+
+    try {
+      await this.userService.update(Number(id), {
+        firstName,
+        lastName,
+        role,
+      });
+
+      this.logger.info("User updated successfully", { id });
+      res.status(200).json({ id: Number(id) });
+    } catch (error) {
+      return next(error);
+    }
   }
 }

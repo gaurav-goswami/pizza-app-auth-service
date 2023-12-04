@@ -47,8 +47,8 @@ Router.patch(
   "/:id",
   authenticate,
   canAccess([Roles.ADMIN]),
-  (req: Request, res: Response) => {
-    return userController.updateUser(req, res);
+  (req: Request, res: Response, next: NextFunction) => {
+    return userController.updateUser(req, res, next);
   },
 );
 
