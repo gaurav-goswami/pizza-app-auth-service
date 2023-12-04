@@ -34,7 +34,7 @@ describe("PATCH /tenant/id", () => {
     await connection.destroy();
   });
 
-  test("should return 204 status code", async () => {
+  test("should return 200 status code", async () => {
     const updatedData = {
       name: "Tenant name (new)",
       address: "Tenant address (new)",
@@ -45,7 +45,7 @@ describe("PATCH /tenant/id", () => {
       .set("Cookie", [`accessToken=${adminToken}`])
       .send(updatedData);
 
-    expect(response.status).toBe(204);
+    expect(response.status).toBe(200);
   });
 
   test("should updated the tenant in the database", async () => {

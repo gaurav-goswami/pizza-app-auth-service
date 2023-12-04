@@ -70,4 +70,8 @@ export default class UserController {
       return next(error);
     }
   }
+
+  updateUser(req: Request, res: Response) {
+    res.json({});
+  }
 }

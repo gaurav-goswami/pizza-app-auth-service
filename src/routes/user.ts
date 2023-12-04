@@ -43,4 +43,13 @@ Router.get(
   },
 );
 
+Router.patch(
+  "/:id",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response) => {
+    return userController.updateUser(req, res);
+  },
+);
+
 export default Router;

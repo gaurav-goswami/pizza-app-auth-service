@@ -77,7 +77,7 @@ export default class TenantController {
     this.logger.info("New request to update a tenant", req.body);
     try {
       await this.tenantService.updateTenantById(Number(id), { name, address });
-      res.status(204).json({ message: "Tenant updated", id });
+      res.status(200).json({ message: "Tenant updated", id });
     } catch (error) {
       return next(error);
     }
