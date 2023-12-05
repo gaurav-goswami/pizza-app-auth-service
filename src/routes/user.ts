@@ -52,4 +52,8 @@ Router.patch(
   },
 );
 
+Router.delete("/:id", (req: Request, res: Response) => {
+  return userController.deleteUser(req, res);
+});
+
 export default Router;

@@ -94,4 +94,8 @@ export default class UserController {
       return next(error);
     }
   }
+
+  deleteUser(req: Request, res: Response) {
+    res.json({});
+  }
 }
