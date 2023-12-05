@@ -56,8 +56,8 @@ Router.delete(
   "/:id",
   authenticate,
   canAccess([Roles.ADMIN]),
-  (req: Request, res: Response) => {
-    return userController.deleteUser(req, res);
+  (req: Request, res: Response, next: NextFunction) => {
+    return userController.deleteUser(req, res, next);
   },
 );
 

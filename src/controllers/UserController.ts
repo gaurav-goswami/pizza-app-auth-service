@@ -95,7 +95,18 @@ export default class UserController {
     }
   }
 
-  deleteUser(req: Request, res: Response) {
-    res.json({});
+  async deleteUser(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params;
+    if (isNaN(Number(id))) {
+      return next(createHttpError(422, "Invalid url param"));
+    }
+    this.logger.info("New request to delete a user", { userId: id });
+    try {
+      await this.userService.deleteById(Number(id));
+      this.logger.info("User deleted successfully", { userId: id });
+      res.json({ userId: id });
+    } catch (error) {
+      return next(error);
+    }
   }
 }

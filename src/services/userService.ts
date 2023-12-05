@@ -63,4 +63,13 @@ export class UserService {
       throw error;
     }
   }
+
+  async deleteById(userId: number) {
+    try {
+      return await this.userRepository.delete(userId);
+    } catch (err) {
+      const error = createHttpError(500, "Failed to delete user");
+      throw error;
+    }
+  }
 }

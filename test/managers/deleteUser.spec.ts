@@ -4,6 +4,7 @@ import { DataSource } from "typeorm";
 import { AppDataSource } from "../../src/config/data-source";
 import { Roles } from "../../src/constants";
 import app from "../../src/app";
+import { User } from "../../src/entity/User";
 
 describe("DELETE /users/id", () => {
   let jwks: ReturnType<typeof createJWKSMock>;
@@ -53,6 +54,26 @@ describe("DELETE /users/id", () => {
         .set("Cookie", [`accessToken=${managerToken}`]);
 
       expect(response.status).toBe(403);
+    });
+
+    test("should delete the user from database", async () => {
+      const data = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "johnDoe@gmail.com",
+        password: "johndoe1234",
+        tenantId: 2,
+      };
+
+      const userRepo = connection.getRepository(User);
+      await userRepo.save({ ...data, role: Roles.MANAGER });
+
+      await request(app)
+        .delete("/users/1")
+        .set("Cookie", [`accessToken=${adminToken}`]);
+
+      const users = await userRepo.find();
+      expect(users).toHaveLength(0);
     });
   });
 
