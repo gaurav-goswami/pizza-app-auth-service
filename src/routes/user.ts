@@ -52,8 +52,13 @@ Router.patch(
   },
 );
 
-Router.delete("/:id", (req: Request, res: Response) => {
-  return userController.deleteUser(req, res);
-});
+Router.delete(
+  "/:id",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response) => {
+    return userController.deleteUser(req, res);
+  },
+);
 
 export default Router;
