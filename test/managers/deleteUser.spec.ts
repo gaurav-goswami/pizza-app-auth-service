@@ -77,5 +77,12 @@ describe("DELETE /users/id", () => {
     });
   });
 
-  describe("ID is missing", () => {});
+  describe("ID is missing", () => {
+    test("should return 422 status if id is invalid or missing", async () => {
+      const response = await request(app)
+        .delete("/users/id")
+        .set("Cookie", [`accessToken=${adminToken}`]);
+      expect(response.status).toBe(422);
+    });
+  });
 });
