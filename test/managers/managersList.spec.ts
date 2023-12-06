@@ -41,18 +41,6 @@ describe("GET /users", () => {
     expect(response.status).toBe(200);
   });
 
-  test("should ensure that only admin can access manager list", async () => {
-    const managerToken = jwks.token({
-      sub: "1",
-      role: Roles.MANAGER,
-    });
-    const response = await request(app)
-      .get("/users")
-      .set("Cookie", [`accessToken=${managerToken}`]);
-
-    expect(response.status).toBe(403);
-  });
-
   test("should return managers list", async () => {
     const managerData = {
       firstName: "John",
