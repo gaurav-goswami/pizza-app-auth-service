@@ -5,11 +5,14 @@ import { AppDataSource } from "../../src/config/data-source";
 import { Roles } from "../../src/constants";
 import app from "../../src/app";
 import { User } from "../../src/entity/User";
+import { createTenant } from "../utils/index";
+import { Tenant } from "../../src/entity/Tenant";
 
 describe("POST /users", () => {
   let jwks: ReturnType<typeof createJWKSMock>;
   let connection: DataSource;
   let adminToken: string;
+  let tenant: { name: string; address: string } & Tenant;
 
   beforeAll(async () => {
     jwks = createJWKSMock("http://localhost:5501");
@@ -24,6 +27,7 @@ describe("POST /users", () => {
       sub: "1",
       role: Roles.ADMIN,
     });
+    tenant = await createTenant(connection.getRepository(Tenant));
   });
 
   afterEach(() => {
@@ -40,7 +44,7 @@ describe("POST /users", () => {
       lastName: "Doe",
       email: "johndoe@gmail.com",
       password: "johndoe1234",
-      tenantId: 1,
+      tenantId: tenant.id,
     };
 
     const response = await request(app)
@@ -57,7 +61,7 @@ describe("POST /users", () => {
       lastName: "Doe",
       email: "johndoe@gmail.com",
       password: "johndoe1234",
-      tenantId: 1,
+      tenantId: tenant.id,
     };
 
     await request(app)
@@ -78,7 +82,7 @@ describe("POST /users", () => {
       lastName: "Doe",
       email: "johndoe@gmail.com",
       password: "johndoe1234",
-      tenantId: 1,
+      tenantId: tenant.id,
     };
 
     await request(app)
@@ -99,7 +103,7 @@ describe("POST /users", () => {
       lastName: "Doe",
       email: "johndoe@gmail.com",
       password: "johndoe1234",
-      tenantId: 1,
+      tenantId: tenant.id,
     };
     const managerToken = jwks.token({
       sub: "2",

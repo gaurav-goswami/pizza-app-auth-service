@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/userService";
 import { CreateUserRequest, UpdateUserRequest } from "../types";
-import { Roles } from "../constants";
 import { validationResult } from "express-validator";
 import { Logger } from "winston";
 import createHttpError from "http-errors";
@@ -19,7 +18,7 @@ export default class UserController {
     }
 
     this.logger.info("New request to create a manager", { email: req.body });
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, tenantId, role } = req.body;
 
     try {
       const user = await this.userService.create({
@@ -27,7 +26,8 @@ export default class UserController {
         lastName,
         email,
         password,
-        role: Roles.MANAGER,
+        role,
+        tenantId,
       });
       this.logger.info("Manager created", { id: user.id });
       res.status(201).json({ id: user.id });
