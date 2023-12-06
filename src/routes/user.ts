@@ -25,14 +25,9 @@ Router.post(
   },
 );
 
-Router.get(
-  "/",
-  authenticate,
-  canAccess([Roles.ADMIN]),
-  (req: Request, res: Response, next: NextFunction) => {
-    return userController.usersList(req, res, next);
-  },
-);
+Router.get("/", (req: Request, res: Response, next: NextFunction) => {
+  return userController.usersList(req, res, next);
+});
 
 Router.get(
   "/:id",
