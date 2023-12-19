@@ -19,13 +19,14 @@ jobs:
       - name: Test and coverage
         run: npm run test
         env:
-          DB_HOST: ${{secret.DB_HOST}}
-          DB_PORT: ${{secret.DB_PORT}}
-          DB_USERNAME: ${{secret.DB_USERNAME}}
-          DB_PASSWORD: ${{secret.DB_PASSWORD}}
-          DB_NAME: ${{secret.DB_NAME}}
+          DB_HOST: ${{secret.TEST_DB_HOST}}
+          DB_PORT: ${{secret.TEST_DB_PORT}}
+          DB_USERNAME: ${{secret.TEST_DB_USERNAME}}
+          DB_PASSWORD: ${{secret.TEST_DB_PASSWORD}}
+          DB_NAME: ${{secret.TEST_DB_NAME}}
           REFRESH_TOKEN_SECRET: ${{secret.REFRESH_TOKEN_SECRET}}
           JWKS_URI: ${{secret.JWKS_URI}}
+          PRIVATE_KEY: ${{secret.PRIVATE_KEY}}
       - name: Build-ts
         run: npm run build
       - name: SonarCloud Scan
