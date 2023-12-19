@@ -9,7 +9,7 @@
     "start": "ts-node src/index.ts",
     "format:check": "prettier . --check",
     "format:fix": "prettier . --write",
-    "lint:check": "eslint .",
+    "lint": "eslint .",
     "prepare": "husky install",
     "test": "jest --no-cache --coverage --all --runInBand",
     "test:watch" : "jest --watch --runInBand", 
