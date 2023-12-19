@@ -32,8 +32,8 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{secretss.GITHUB_TOKEN}}
-          SONAR_TOKEN: ${{secretss.SONAR_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
 
   build-and-push-docker:
     name: Build and Push Docker Image
@@ -49,8 +49,8 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
         with:
-          username: ${{secretss.DOCKERHUB_USERNAME}}
-          password: ${{secretss.DOCKERHUB_PASSWORD}}
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_PASSWORD}}
       - name: Build Docker Image
         run: docker build -t ${{env.IMAGE_NAME}}:${{env.IMAGE_TAG}} -f docker/prod/Dockerfile .
       - name: Push Docker image to Docker Hub
