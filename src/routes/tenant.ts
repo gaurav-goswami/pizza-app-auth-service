@@ -1,4 +1,9 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, {
+  NextFunction,
+  Request,
+  RequestHandler,
+  Response,
+} from "express";
 import TenantController from "../controllers/TenantContoller";
 import { ITenantRequest } from "../types";
 import { TenantService } from "../services/tenantService";
@@ -18,38 +23,54 @@ const tenantController = new TenantController(tenantService, logger);
 
 Router.post(
   "/",
-  authenticate,
+  authenticate as RequestHandler,
   canAccess([Roles.ADMIN]),
   tenantValidator,
   (req: ITenantRequest, res: Response, next: NextFunction) => {
-    return tenantController.create(req, res, next);
+    return tenantController.create(req, res, next) as unknown as RequestHandler;
   },
 );
 
 Router.get("/", (req: Request, res: Response, next: NextFunction) => {
-  return tenantController.tenantList(req, res, next);
+  return tenantController.tenantList(
+    req,
+    res,
+    next,
+  ) as unknown as RequestHandler;
 });
 
 Router.get("/:id", (req: Request, res: Response, next: NextFunction) => {
-  return tenantController.getTenant(req, res, next);
+  return tenantController.getTenant(
+    req,
+    res,
+    next,
+  ) as unknown as RequestHandler;
 });
 
 Router.patch(
   "/:id",
-  authenticate,
+  authenticate as RequestHandler,
   canAccess([Roles.ADMIN]),
   tenantValidator,
   (req: Request, res: Response, next: NextFunction) => {
-    return tenantController.updateTenant(req, res, next);
+    return tenantController.updateTenant(
+      req,
+      res,
+      next,
+    ) as unknown as RequestHandler;
   },
 );
 
 Router.delete(
   "/:id",
-  authenticate,
+  authenticate as RequestHandler,
   canAccess([Roles.ADMIN]),
   (req: Request, res: Response, next: NextFunction) => {
-    return tenantController.deleteTenant(req, res, next);
+    return tenantController.deleteTenant(
+      req,
+      res,
+      next,
+    ) as unknown as RequestHandler;
   },
 );
 

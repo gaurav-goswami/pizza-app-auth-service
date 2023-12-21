@@ -1,4 +1,9 @@
-import express, { Response, Request, NextFunction } from "express";
+import express, {
+  Response,
+  Request,
+  NextFunction,
+  RequestHandler,
+} from "express";
 import UserController from "../controllers/UserController";
 import { UserService } from "../services/userService";
 import { AppDataSource } from "../config/data-source";
@@ -17,42 +22,63 @@ const userController = new UserController(userService, logger);
 
 Router.post(
   "/",
-  authenticate,
+  authenticate as RequestHandler,
   canAccess([Roles.ADMIN]),
   createUserValidator,
   (req: Request, res: Response, next: NextFunction) => {
-    return userController.createUser(req, res, next);
+    return userController.createUser(
+      req,
+      res,
+      next,
+    ) as unknown as RequestHandler;
   },
 );
 
-Router.get("/", (req: Request, res: Response, next: NextFunction) => {
-  return userController.usersList(req, res, next);
-});
+Router.get(
+  "/",
+  authenticate as RequestHandler,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response, next: NextFunction) => {
+    return userController.usersList(
+      req,
+      res,
+      next,
+    ) as unknown as RequestHandler;
+  },
+);
 
 Router.get(
   "/:id",
-  authenticate,
+  authenticate as RequestHandler,
   canAccess([Roles.ADMIN]),
   (req: Request, res: Response, next: NextFunction) => {
-    return userController.getUser(req, res, next);
+    return userController.getUser(req, res, next) as unknown as RequestHandler;
   },
 );
 
 Router.patch(
   "/:id",
-  authenticate,
+  authenticate as RequestHandler,
   canAccess([Roles.ADMIN]),
   (req: Request, res: Response, next: NextFunction) => {
-    return userController.updateUser(req, res, next);
+    return userController.updateUser(
+      req,
+      res,
+      next,
+    ) as unknown as RequestHandler;
   },
 );
 
 Router.delete(
   "/:id",
-  authenticate,
+  authenticate as RequestHandler,
   canAccess([Roles.ADMIN]),
   (req: Request, res: Response, next: NextFunction) => {
-    return userController.deleteUser(req, res, next);
+    return userController.deleteUser(
+      req,
+      res,
+      next,
+    ) as unknown as RequestHandler;
   },
 );
 
