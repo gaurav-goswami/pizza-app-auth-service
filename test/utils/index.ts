@@ -23,7 +23,7 @@ export const isJwt = (token: string | null): boolean => {
     });
     return true;
   } catch (error) {
-    return false;
+    throw error;
   }
 };
 

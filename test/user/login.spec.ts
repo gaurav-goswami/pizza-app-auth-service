@@ -59,8 +59,8 @@ describe("POST /auth/login", () => {
         ["set-cookie"]: string[];
       }
 
-      let accessToken = null;
-      let refreshToken = null;
+      let accessToken: string | null = null;
+      let refreshToken: string | null = null;
 
       const data = {
         firstName: "John",
