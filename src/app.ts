@@ -4,13 +4,22 @@ import express, { Request, Response, NextFunction } from "express";
 import { HttpError } from "http-errors";
 import logger from "./config/logger";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 // routes import
 import authRoute from "./routes/auth";
 import tenantRoute from "./routes/tenant";
 import usersRoute from "./routes/user";
+import { Config } from "./config";
 
 const app = express();
+app.use(
+  cors({
+    origin: [Config.CLIENT_URL as string],
+    credentials: true,
+    methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
+  }),
+);
 app.use(express.static("public"));
 app.use(express.json());
 app.use(cookieParser());
