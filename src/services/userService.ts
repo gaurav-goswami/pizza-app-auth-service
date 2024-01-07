@@ -3,6 +3,7 @@ import { User } from "../entity/User";
 import { LimitedUserData, UserData } from "../types";
 import createHttpError from "http-errors";
 import bcrypt from "bcryptjs";
+import { Roles } from "../constants";
 
 export class UserService {
   constructor(private userRepository: Repository<User>) {}
@@ -12,7 +13,7 @@ export class UserService {
     lastName,
     email,
     password,
-    role,
+    role = Roles.CUSTOMER,
     tenantId,
   }: UserData) {
     const user = await this.userRepository.findOne({ where: { email } });
@@ -48,7 +49,10 @@ export class UserService {
   }
 
   async findById(id: number) {
-    return this.userRepository.findOne({ where: { id } });
+    return this.userRepository.findOne({
+      where: { id },
+      relations: { tenant: true },
+    });
   }
 
   async getAllUsers() {

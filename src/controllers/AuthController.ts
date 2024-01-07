@@ -7,7 +7,6 @@ import { JwtPayload } from "jsonwebtoken";
 import { TokenService } from "../services/tokenService";
 import createHttpError from "http-errors";
 import { CredentialService } from "../services/credentialService";
-import { Roles } from "../constants";
 
 class AuthController {
   constructor(
@@ -23,7 +22,7 @@ class AuthController {
       return res.status(400).json({ error: result.array() });
     }
 
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, role } = req.body;
     this.logger.debug("Register request", {
       firstName,
       lastName,
@@ -36,7 +35,7 @@ class AuthController {
         lastName,
         email,
         password,
-        role: Roles.CUSTOMER,
+        role,
       });
 
       this.logger.info("user has been registered", { id: user.id });
