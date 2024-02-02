@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/userService";
-import { CreateUserRequest, UpdateUserRequest } from "../types";
-import { validationResult } from "express-validator";
+import {
+  CreateUserRequest,
+  IUserQueryParams,
+  UpdateUserRequest,
+} from "../types";
+import { matchedData, validationResult } from "express-validator";
 import { Logger } from "winston";
 import createHttpError from "http-errors";
 
@@ -39,11 +43,19 @@ export default class UserController {
   async usersList(req: Request, res: Response, next: NextFunction) {
     this.logger.info("Request to get managers list");
 
+    const validatedQuery = matchedData(req, { onlyValidData: true });
     try {
-      const users = await this.userService.getAllUsers();
+      const [users, count] = await this.userService.getAllUsers(
+        validatedQuery as IUserQueryParams,
+      );
       this.logger.info("All users have been fetched");
 
-      res.json(users);
+      return res.json({
+        currentPage: validatedQuery.currentPage as number,
+        perPage: validatedQuery.perPage as number,
+        total: count,
+        data: users,
+      });
     } catch (error) {
       return next(error);
     }

@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { User } from "../entity/User";
-import { LimitedUserData, UserData } from "../types";
+import { IUserQueryParams, LimitedUserData, UserData } from "../types";
 import createHttpError from "http-errors";
 import bcrypt from "bcryptjs";
 import { Roles } from "../constants";
@@ -55,8 +55,14 @@ export class UserService {
     });
   }
 
-  async getAllUsers() {
-    return this.userRepository.find();
+  async getAllUsers(validatedQuery: IUserQueryParams) {
+    const queryBuilder = this.userRepository.createQueryBuilder();
+    const result = await queryBuilder
+      .skip((validatedQuery.currentPage - 1) * validatedQuery.perPage)
+      .take(validatedQuery.perPage)
+      .getManyAndCount();
+
+    return result;
   }
 
   async userById(id: number) {
