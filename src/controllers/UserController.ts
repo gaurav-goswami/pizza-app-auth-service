@@ -41,7 +41,7 @@ export default class UserController {
   }
 
   async usersList(req: Request, res: Response, next: NextFunction) {
-    this.logger.info("Request to get managers list");
+    this.logger.info("Request to get users list");
 
     const validatedQuery = matchedData(req, { onlyValidData: true });
     try {
